@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -73,6 +73,50 @@ class ProgressResponse(BaseModel):
     accuracy: float
     streak_days: int
     last_study_date: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+class StudySessionResponse(BaseModel):
+    session_id: str
+    topic_id: int
+    topic_name: str
+    total_flashcards: int
+    current_index: int
+    flashcard: Optional[dict]=None
+
+    class Config:
+        from_attributes = True
+
+class FlashcardAnswerSubmit(BaseModel):
+    session_id: str
+    flashcard_id: int
+    is_correct: bool
+
+class FlashcardAnswerResponse(BaseModel):
+    correct: bool
+    correct_answer: str
+    has_next: bool
+    progress: dict
+
+    class Config:
+        from_attributes = True
+
+class SessionSummary(BaseModel):
+    session_id: str
+    topic_name: str
+    total_reviewed: int
+    correct_count: int
+    accuracy: float
+    streak_days: int
+
+class OverallProgressResponse(BaseModel):
+    total_topics: int
+    total_flashcards_reviewed: int
+    overall_accuracy: float
+    current_streak: int
+    longest_streak: int
+    topics: List[ProgressResponse]
 
     class Config:
         from_attributes = True

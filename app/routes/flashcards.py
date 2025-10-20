@@ -195,7 +195,7 @@ async def generate_flashcards(
         )
 
     prompt = (
-        f"Generate {request.count} flashcards about {request.topic_name} "
+        f"Generate {request.count} flashcards about {request.topic_name} (the answer cant be more than 5 words) "
         f"with {request.difficulty} difficulty. "
         "Return as a JSON array, where each item has 'question' and 'answer' fields."
     )

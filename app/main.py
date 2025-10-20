@@ -4,7 +4,7 @@ from . import models
 from .routes import authentication, topics, flashcards
 
 Base.metadata.create_all(bind=engine)
-print("All tables created")
+
 app = FastAPI(
     title="Study Assistant API",
     version="1.0.0",
