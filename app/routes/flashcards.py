@@ -3,7 +3,7 @@ from openai.types.chat import ChatCompletion
 from sqlalchemy.orm import Session
 from typing import List
 import json
-import openai
+from openai import OpenAI
 from ..database import get_db
 from ..models import User, Topic, Flashcard, UserProgress
 from ..schemas import FlashcardResponse, FlashcardCreate, FlashcardUpdate, AIFlashcardRequest
@@ -15,7 +15,6 @@ router = APIRouter(
     prefix="/topics/{topic_id}/flashcards",
     tags=["Flashcards"]
 )
-openai.api_key = settings.openai_api_key
 
 @router.post("", response_model=FlashcardResponse, status_code=status.HTTP_201_CREATED)
 async def create_flashcard(
@@ -195,34 +194,55 @@ async def generate_flashcards(
             detail="AI generation not configured. Please set OPENAI_API_KEY"
         )
 
+    try:
+        client = OpenAI(api_key=settings.openai_api_key)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to initialize OpenAI client: {str(e)}"
+        )
+
     prompt = (
-        f"Generate {request.count} flashcards about {request.topic_name} (the answer cant be more than 5 words) "
+        f"Generate {request.count} flashcards about {topic.name} (the answer cant be more than 5 words) "
         f"with {request.difficulty} difficulty. "
-        "Return as a JSON array, where each item has 'question' and 'answer' fields."
+        "Return ONLY valid JSON with this structure: "
+        '{"flashcards" : [{"question" : "...", "answer" : "..."}, ...]}'
     )
 
     try:
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                ChatCompletion.system("You are a helpful study assistant that creates educational flashcards"),
-                ChatCompletion.user(prompt)
+                {
+                    "role" : "system",
+                    "content" : "You are a helpful study assistant that creates educational flashcards. Always return valid JSON only."
+                },
+                {
+                    "role" : "user",
+                    "content" : prompt
+                }
             ],
-            response_format="json_object",
+            response_format={"type" : "json_object"},
             temperature=0.7
         )
 
         content = response.choices[0].message.content.strip()
         try:
             parsed = json.loads(content)
-            flashcards_data = parsed.get("flashcards", parsed)
-        except json.JSONDecodeError:
+            flashcards_data = parsed.get("flashcards", [])
+        except json.JSONDecodeError as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Invalid JSON returned from OpenAI API"
+                detail=f"Invalid JSON returned from OpenAI API: {str(e)}"
             )
 
-        flashcards = []
+        if not flashcards_data:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="OpenAI returned empty flashcards list"
+            )
+
+        created_flashcards = []
         for fc in flashcards_data[:request.count]:
             db_flashcard = Flashcard(
                 topic_id=topic.id,
@@ -231,17 +251,19 @@ async def generate_flashcards(
                 difficulty=request.difficulty
             )
             db.add(db_flashcard)
-            flashcards.append(db_flashcard)
+            created_flashcards.append(db_flashcard)
 
         db.commit()
-        return flashcards
 
-    except openai.APIError as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
+        for flashcard in created_flashcards:
+            db.refresh(flashcard)
+        return created_flashcards
+
+
+    except HTTPException:
+        raise
     except Exception as e:
+        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)

@@ -62,7 +62,6 @@ class FlashcardResponse(BaseModel):
         from_attributes = True
 
 class AIFlashcardRequest(BaseModel):
-    topic_name: str
     count: int=5
     difficulty: Optional[str]="medium"
 
