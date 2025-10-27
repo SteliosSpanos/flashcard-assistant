@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from .database import engine, Base
-from . import models
-from .routes import authentication, topics, flashcards
+from .routes import authentication, topics, flashcards, study
 
 Base.metadata.create_all(bind=engine)
 
@@ -16,6 +15,8 @@ app.include_router(authentication.router)
 app.include_router(topics.router)
 
 app.include_router(flashcards.router)
+
+app.include_router(study.router)
 
 @app.get("/")
 async def root():
