@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from openai.types.chat import ChatCompletion
 from sqlalchemy.orm import Session
 from typing import List
 import json
@@ -6,7 +7,7 @@ import openai
 from ..database import get_db
 from ..models import User, Topic, Flashcard, UserProgress
 from ..schemas import FlashcardResponse, FlashcardCreate, FlashcardUpdate, AIFlashcardRequest
-from ..auth import get_current_user, decode_access_token
+from ..auth import get_current_user
 from ..settings import settings
 from datetime import datetime, timezone
 
@@ -204,10 +205,10 @@ async def generate_flashcards(
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role" : "system", "content" : "You are a helpful study assistant that creates educational flashcards"},
-                {"role" : "user", "content" : prompt}
+                ChatCompletion.system("You are a helpful study assistant that creates educational flashcards"),
+                ChatCompletion.user(prompt)
             ],
-            response_format={"type" : "json_object"},
+            response_format="json_object",
             temperature=0.7
         )
 

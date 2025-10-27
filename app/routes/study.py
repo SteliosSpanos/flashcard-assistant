@@ -107,7 +107,7 @@ async def submit_answer(
     has_next = session["current_index"] < len(session["flashcards"])
 
     total_answered = len(session["results"])
-    correct_count = sum(1 for r in session["results"] if r["flashcards"])
+    correct_count = sum(1 for r in session["results"] if r["is_correct"])
     accuracy = (correct_count / total_answered * 100) if total_answered > 0 else 0
 
     return FlashcardAnswerResponse(
@@ -124,7 +124,7 @@ async def submit_answer(
 
 @router.get("/next/{session_id}", response_model=StudySessionResponse)
 async def get_next_flashcard(
-        session_id: int,
+        session_id: str,
         current_user: User=Depends(get_current_user),
         db: Session=Depends(get_db)
 ):
@@ -172,7 +172,7 @@ async def get_next_flashcard(
 
 @router.get("/summary/{session_id}", response_model=SessionSummary)
 async def get_session_summary(
-        session_id: int,
+        session_id: str,
         current_user: User=Depends(get_current_user),
         db: Session=Depends(get_db)
 ):
@@ -222,10 +222,11 @@ async def get_session_summary(
     if progress.last_study_date:
         last_date = progress.last_study_date.replace(tzinfo=timezone.utc) if progress.last_study_date.tzinfo is None else progress.last_study_date
         days_diff = (now.date() - last_date.date()).days
-
-        if days_diff == 1:
+        if days_diff == 0:
+            pass
+        elif days_diff == 1:
             progress.streak_days += 1
-        elif days_diff > 1:
+        else:
             progress.streak_days = 1
     else:
         progress.streak_days = 1
