@@ -15,7 +15,7 @@ router = APIRouter(
 
 active_sessions = {}
 
-@router.post("/topics/{topic_id}/start", response_model=StudySessionResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/{topic_id}/start", response_model=StudySessionResponse, status_code=status.HTTP_201_CREATED)
 async def start_study_session(
 	topic_id: int,
 	current_user: User=Depends(get_current_user),
@@ -246,3 +246,24 @@ async def get_session_summary(
         accuracy=round(accuracy, 2),
         streak_days=progress.streak_days,
     )
+
+@router.delete("/cancel/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def cancel_session(
+        session_id: str,
+        current_user: User=Depends(get_current_user)
+):
+    if session_id not in active_sessions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Study session not found"
+        )
+
+    session = active_sessions[session_id]
+
+    if session["user_id"] != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not your session"
+        )
+
+    del active_sessions[session_id]
