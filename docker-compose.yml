@@ -1,0 +1,44 @@
+version '3.8'
+
+services:
+  db:
+    image: postgres:15
+
+    container_name: flashcard-db
+
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+
+    container_name: flashcard-api
+
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+    volumes:
+      - .:/app
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DATABASE_URL: postgresql://${DB_NAME}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      SECRET_KEY: ${SECRET_KEY}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+    depends_on:
+    - db
+
+volumes:
+  postgres_data:
+
+
