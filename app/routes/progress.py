@@ -105,3 +105,28 @@ async def get_overall_progress(
         topics=topics_progress
     )
 
+@router.delete("/{topic_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_topic_progress(
+        topic_id: int,
+        current_user: User=Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    topic = db.query(Topic).filter(
+        Topic.id == topic_id,
+        Topic.user_id == current_user.id
+    ).first()
+
+    if not topic:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Topic not found"
+        )
+
+    progress = db.query(UserProgress).filter(
+        UserProgress.user_id == current_user.id,
+        UserProgress.topic_id == topic_id
+    ).first()
+
+    if progress:
+        db.delete(progress)
+        db.commit()
