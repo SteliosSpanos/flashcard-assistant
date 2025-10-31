@@ -1,24 +1,18 @@
-# Core Framework
 fastapi==0.118.3
 uvicorn[standard]==0.37.0
 
-# Database
 sqlalchemy==2.0.44
 psycopg2-binary==2.9.11
 
-# Configuration & Validation
 pydantic==2.12.0
 pydantic-settings==2.11.0
 python-dotenv==1.1.1
 email-validator==2.3.0
 
-# Authentication & Security
 python-jose[cryptography]==3.5.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
 
-# AI Integration
 openai==2.3.0
 
-# Utilities
 python-multipart==0.0.20
