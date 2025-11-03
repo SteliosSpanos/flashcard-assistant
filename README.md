@@ -41,11 +41,11 @@ A modern, AI-powered flashcard API built with FastAPI and PostgreSQL. Create stu
 
 ## Architecture
 
-**Backend Framework**: Python FastAPI 
-**Database**: PostgreSQL with SQLAlchemy ORM
-**Authentication**: JWT tokens using python-jose and bcrypt password hashing
-**AI Integration**: OpenAI API with structured JSON output for reliable flashcard generation
-**Session Management**: In-memory study session storage with UUID-based identification
+- **Backend Framework**: Python FastAPI 
+- **Database**: PostgreSQL with SQLAlchemy ORM
+- **Authentication**: JWT tokens using python-jose and bcrypt password hashing
+- **AI Integration**: OpenAI API with structured JSON output for reliable flashcard generation
+- **Session Management**: In-memory study session storage with UUID-based identification
 
 **Data Model**:
 ```
