@@ -46,8 +46,8 @@ async def get_daily_flashcard(
         progress = next((p for p in all_progress if p.topic_id == topic.id), None)
 
         if progress and progress.total_answers > 0:
-            accuracy = (progress.correct_answers / progress.total_answers) * 100 if progress.total_answers > 0 else 0
-        else:di
+            accuracy = (progress.correct_answers / progress.total_answers) * 100
+        else:
             accuracy = 0.0
 
         if accuracy < lowest_accuracy:
