@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .database import engine, Base
-from .routes import authentication, topics, flashcards, study, progress
+from .routes import authentication, topics, flashcards, study, progress, automation
 
 Base.metadata.create_all(bind=engine)
 
@@ -19,6 +19,8 @@ app.include_router(flashcards.router)
 app.include_router(study.router)
 
 app.include_router(progress.router)
+
+app.include_router(automation.router)
 
 @app.get("/")
 async def root():
