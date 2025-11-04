@@ -119,3 +119,16 @@ class OverallProgressResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class DailyFlashcardResponse(BaseModel):
+    flashcard_id: int
+    topic_id: int
+    topic_name: str
+    question: str
+    answer: str
+    difficulty: str
+    user_progress: dict
+
+    class Config:
+        from_atrributes = True
+
