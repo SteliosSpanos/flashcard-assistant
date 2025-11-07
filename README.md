@@ -40,7 +40,6 @@ A modern, AI-powered flashcard API built with FastAPI and PostgreSQL. Create stu
 - **Discord Automation**:
   - Automated daily flashcard reminders via n8n workflows
   - Smart topic selection (prioritizes topics with lowest accuracy)
-  - Rich Discord embeds with color-coded difficulty levels
   - Spoiler-tagged answers for self-testing
 - **RESTful API**: Clean, well-documented API with automatic Swagger UI documentation
 - **Docker Support**: Containerized deployment with docker-compose for easy setup
@@ -471,11 +470,7 @@ The Swagger UI provides a comprehensive interface to:
 - `DELETE /progress/{topic_id}` - Delete the progress in a topic
 
 **Automation**:
-- `GET /automation/daily-flashcard` - Get a flashcard for automated reminders
-  - Returns flashcard from topic with lowest accuracy
-  - Includes user progress stats (accuracy, streak, cards reviewed)
-  - Designed for n8n/Discord integration workflows
-  - Prioritizes unstudied topics (0% accuracy)
+- `GET /automation/daily-flashcard` - Get a flashcard from the topic with the lowest accuracy for automated reminders
 
 ## Project Structure
 
