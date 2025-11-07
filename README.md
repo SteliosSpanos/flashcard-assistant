@@ -16,9 +16,10 @@ A modern, AI-powered flashcard API built with FastAPI and PostgreSQL. Create stu
   - [Managing Topics and Flashcards](#managing-topics-and-flashcards)
   - [Study Sessions](#study-sessions)
   - [Progress Tracking](#progress-tracking)
+  - [Automation Endpoint](#automation-endpoint)
+- [Discord Automation](#discord-automation)
 - [API Documentation](#api-documentation)
 - [Project Structure](#project-structure)
-- [Development](#development)
 - [License](#license)
 
 ## Features
@@ -36,6 +37,11 @@ A modern, AI-powered flashcard API built with FastAPI and PostgreSQL. Create stu
   - Per-topic statistics (accuracy, cards reviewed, total attempts)
   - Study streak tracking with daily continuity detection
   - All-time performance metrics
+- **Discord Automation**:
+  - Automated daily flashcard reminders via n8n workflows
+  - Smart topic selection (prioritizes topics with lowest accuracy)
+  - Rich Discord embeds with color-coded difficulty levels
+  - Spoiler-tagged answers for self-testing
 - **RESTful API**: Clean, well-documented API with automatic Swagger UI documentation
 - **Docker Support**: Containerized deployment with docker-compose for easy setup
 
@@ -329,6 +335,95 @@ Response:
 - Resets to 1 if you skip a day
 - Remains unchanged if you study multiple times on the same day
 
+### Automation Endpoint
+
+**Get a daily flashcard** (for automated reminders):
+```bash
+curl -X GET "http://localhost:8000/automation/daily-flashcard" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+Response:
+```json
+{
+  "flashcard_id": 42,
+  "topic_id": 5,
+  "topic_name": "Python Basics",
+  "question": "What is a decorator in Python?",
+  "answer": "A function that modifies another",
+  "difficulty": "medium",
+  "user_progress": {
+    "accuracy": 75.0,
+    "streak_days": 5,
+    "flashcards_reviewed": 23
+  }
+}
+```
+
+This endpoint automatically selects a flashcard from the topic where you need the most practice (lowest accuracy), making it ideal for automated daily reminders via n8n, Discord bots, or other automation tools.
+
+## Discord Automation
+
+Set up automated daily flashcard reminders sent directly to your Discord server using n8n workflows.
+
+### Features
+
+- **Automated Daily Reminders**: Schedule flashcards to be sent at specific times
+- **Smart Topic Selection**: Automatically selects flashcards from your weakest topics
+- **Rich Discord Embeds**: Beautiful, color-coded messages based on difficulty
+  - 🟢 Green for Easy
+  - 🟡 Yellow for Medium
+  - 🔴 Red for Hard
+- **Spoiler-Tagged Answers**: Click to reveal answers for self-testing
+- **Progress Stats**: Shows your current accuracy, streak, and cards reviewed
+
+### Quick Setup
+
+1. **Create a Discord webhook** in your server:
+   - Server Settings → Integrations → Webhooks → New Webhook
+   - Copy the webhook URL
+
+2. **Set up n8n** (cloud or self-hosted)
+
+3. **Configure environment variables** in n8n:
+   ```bash
+   API_BASE_URL=http://your-api-url:8000
+   API_USERNAME=your_username
+   API_PASSWORD=your_password
+   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+   ```
+
+4. **Import the workflow**:
+   - Import `n8n-workflows/discord-daily-flashcard.json` into n8n
+   - Customize the schedule (default: 9:00 AM daily)
+   - Activate the workflow
+
+5. **Start receiving daily flashcards** in Discord!
+
+### Example Discord Message
+
+```
+📚 Daily Flashcard - Python Basics
+Difficulty: Medium
+
+Time to keep your study streak going! 🔥
+
+❓ Question
+What is a decorator in Python?
+
+💡 Answer
+||A function that modifies another||
+
+📊 Your Progress
+Accuracy: 75%
+Streak: 5 days
+Cards Reviewed: 23
+
+💡 Open the app to study and improve your progress!
+```
+
+**For detailed setup instructions**, see [`docs/n8n-discord-setup.md`](docs/n8n-discord-setup.md)
+
 ## API Documentation
 
 Interactive API documentation is automatically generated and available at:
@@ -375,6 +470,13 @@ The Swagger UI provides a comprehensive interface to:
 - `GET /progress/` - Get all-time progress across all the topics
 - `DELETE /progress/{topic_id}` - Delete the progress in a topic
 
+**Automation**:
+- `GET /automation/daily-flashcard` - Get a flashcard for automated reminders
+  - Returns flashcard from topic with lowest accuracy
+  - Includes user progress stats (accuracy, streak, cards reviewed)
+  - Designed for n8n/Discord integration workflows
+  - Prioritizes unstudied topics (0% accuracy)
+
 ## Project Structure
 
 ```
@@ -391,7 +493,12 @@ flashcard-assistant/
 │       ├── topics.py              # Topic CRUD operations
 │       ├── flashcards.py          # Flashcard management and AI generation
 │       ├── study.py               # Study session management
-│       └── progress.py            # Progress tracking and statistics
+│       ├── progress.py            # Progress tracking and statistics
+│       └── automation.py          # Automation endpoints for integrations
+├── n8n-workflows/
+│   └── discord-daily-flashcard.json  # n8n workflow for Discord automation
+├── docs/
+│   └── n8n-discord-setup.md       # Discord automation setup guide
 ├── requirements.txt               # Python dependencies
 ├── Dockerfile                     # Docker image definition
 ├── docker-compose.yml             # Multi-container Docker setup
