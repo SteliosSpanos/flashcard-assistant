@@ -1,6 +1,6 @@
 API_BASE_URL="http://localhost:8000"
-API_USERNAME="steliosspan"
-API_PASSWORD="192126SM"
+API_USERNAME="your_username"
+API_PASSWORD="your_password"
 
-DISCORD_WEBHOOK_URL="https://discordapp.com/api/webhooks/1437579810464469033/nrUvJZD1H3RK08B0MKga7ADSEXxuof86FMdGXjJKgEKwc_MfKeZ6lz-N7DzHJmtELLxG"
+DISCORD_WEBHOOK_URL="your_discord_webhook_url"
 
