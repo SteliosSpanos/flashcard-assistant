@@ -87,28 +87,28 @@ DIFFICULTY_DISPLAY="${DIFFICULTY^}"    # uppercase first letter
 DISCORD_PAYLOAD=$(cat <<EOF    
   {
     "embeds": [{
-      "title": "📚 Daily Flashcard - $TOPIC_NAME",
-      "description": "**Difficulty:** $DIFFICULTY_DISPLAY\n\nTime to keep your study streak going! 🔥",
+      "title": "Daily Flashcard - $FLASHCARD_ID | $TOPIC_NAME",
+      "description": "**Difficulty:** $DIFFICULTY_DISPLAY\n\nTime to keep your study streak going!",
       "color": $COLOR,
       "fields": [
         {
-          "name": "❓ Question",
+          "name": "Question",
           "value": "$QUESTION",
           "inline": false
         },
         {
-          "name": "💡 Answer",
+          "name": "Answer",
           "value": "||$ANSWER||",
           "inline": false
         },
         {
-          "name": "📊 Your Progress",
+          "name": "Your Progress",
           "value": "**Accuracy:** ${ACCURACY}%\n**Streak:** $STREAK days\n**Cards Reviewed:** $CARDS_REVIEWED",
           "inline": false
         }
       ],
       "footer": {
-        "text": "💡 Open the app to study and improve your progress!"
+        "text": "Open the app to study and improve your progress!"
       },
       "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
     }]
