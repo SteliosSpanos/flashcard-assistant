@@ -363,7 +363,7 @@ This endpoint automatically selects a flashcard from the topic where you need th
 
 ## Discord Automation
 
-Set up automated daily flashcard reminders sent directly to your Discord server using n8n workflows.
+Set up automated daily flashcard reminders sent directly to your Discord server using a bash script.
 
 ### Features
 
@@ -373,7 +373,6 @@ Set up automated daily flashcard reminders sent directly to your Discord server 
   - 🟢 Green for Easy
   - 🟡 Yellow for Medium
   - 🔴 Red for Hard
-- **Spoiler-Tagged Answers**: Click to reveal answers for self-testing
 - **Progress Stats**: Shows your current accuracy, streak, and cards reviewed
 
 ### Quick Setup
@@ -513,3 +512,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Contributing**: Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
 
 **Support**: For questions or issues, please open a GitHub issue with detailed information about your environment and the problem you're encountering.
+
