@@ -40,7 +40,7 @@ chmod +x discord-flashcard-bot.sh
 
 ```bash
 # Start your API first
-cd ~/Desktop/Py_Projects/flashcard-assistant
+cd ~/.../flashcard-assistant
 uvicorn app.main:app --reload &
 
 # Run the script
@@ -59,7 +59,7 @@ crontab -e
 Add this line to run daily at 9:00 AM:
 
 ```
-0 9 * * * /home/steliosspanos/Desktop/Py_Projects/flashcard-assistant/scripts/discord-flashcard-bot.sh
+0 9 * * * /.../flashcard-assistant/scripts/discord-flashcard-bot.sh
 ```
 
 ## Common Cron Schedules
