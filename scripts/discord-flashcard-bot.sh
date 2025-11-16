@@ -13,7 +13,7 @@ error_exit() {
 	exit 1
 }
 
-if [! -f "$CONFIG_FILE" ]; then
+if [ ! -f "$CONFIG_FILE" ]; then
 	error_exit "Config file not found at $CONFIG_FILE. Please create it from config.example"
 fi
 
@@ -27,7 +27,7 @@ source $CONFIG_FILE
 log "Starting Discord flashacard bot..."
 
 log "Logging in to API at $API_BASE_URL..."
-LOGIN_RESPONSE=$(curl -X POST "$API_BASE_URL/auth/login" -H "Content-Type: x-www-form-urlencoded" -d "username=$API_USERNAME&password=$API_PASSWORD")
+LOGIN_RESPONSE=$(curl -s -X POST "$API_BASE_URL/auth/login" -H "Content-Type: application/x-www-form-urlencoded" -d "username=$API_USERNAME&password=$API_PASSWORD")
 
 if [[ $? -ne 0 ]]; then          # $? : exit status of last command
 	error_exit "Failed to connect to API at $API_BASE_URL"
@@ -35,7 +35,7 @@ fi
 
 ACCESS_TOKEN=$(echo "$LOGIN_RESPONSE" | jq -r ".access_token")         # extract raw the contents of 'access_token' field
 
-if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" == "null"]; then
+if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" == "null" ]; then
 	error_exit "Failed to get access token. Check your credentials"
 fi
 
