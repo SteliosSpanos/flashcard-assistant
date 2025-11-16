@@ -98,6 +98,6 @@ async def get_daily_flashcard(
             question=selected_flashcard.question,
             answer=selected_flashcard.answer,
             difficulty=selected_flashcard.difficulty,
-            user_progress=progress.data
+            user_progress=progress_data
     )
 
