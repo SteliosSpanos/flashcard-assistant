@@ -65,12 +65,30 @@ fi
 
 log "Fetched flashcard: $FLASHCARD_ID - $TOPIC_NAME - $DIFFICULTY"
 
+case "${DIFFICULTY,,}" in
+	"easy")
+		COLOR=5763719
+		;;
+	"moderate")
+		COLOR=16776960
+		;;
+	"hard")
+		COLOR=15548997
+		;;
+	*)
+		COLOR=3447003
+		;;
+esac
+
+DIFFICULTY_DISPLAY="${DIFFICULTY^}"
+
 # heredoc : set the variale with the text marked by the EOF
 DISCORD_PAYLOAD=$(cat <<EOF    
   {
     "embeds": [{
       "title": "Daily Flashcard - $FLASHCARD_ID | $TOPIC_NAME",
-      "description": "**Difficulty:** $DIFFICULTY\n\nTime to keep your study streak going!",
+      "description": "**Difficulty:** $DIFFICULTY_DISPLAY\n\nTime to keep your study streak going!",
+      "color" : $COLOR,
       "fields": [
         {
           "name": "Question",
