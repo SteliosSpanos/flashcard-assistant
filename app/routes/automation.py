@@ -61,7 +61,7 @@ async def get_daily_flashcard(
                 detail="No topics with flashcard found"
         )
 
-    fashcards = db.query(Flashcard).filter(
+    flashcards = db.query(Flashcard).filter(
             Flashcard.topic_id == topic.id,
     ).all()
 
