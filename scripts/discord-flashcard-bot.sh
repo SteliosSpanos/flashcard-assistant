@@ -50,7 +50,6 @@ if [ $? -ne 0 ]; then
 	error_exit "Failed to fetch flashcard from API"
 fi
 
-
 FLASHCARD_ID=$(echo "$FLASHCARD_RESPONSE" | jq -r ".flashcard_id")
 TOPIC_NAME=$(echo "$FLASHCARD_RESPONSE" | jq -r ".topic_name")
 QUESTION=$(echo "$FLASHCARD_RESPONSE" | jq -r ".question")
@@ -66,32 +65,12 @@ fi
 
 log "Fetched flashcard: $FLASHCARD_ID - $TOPIC_NAME - $DIFFICULTY"
 
-
-case "${DIFFICULTY,,}" in        # all lowercase
-	easy)
-		COLOR=5763719
-		;;
-	moderate)
-		COLOR=16776960
-		;;
-	hard)
-		COLOR=15548997
-		;;
-	*)
-		COLOR=3447003
-		;;
-esac
-
-
-DIFFICULTY_DISPLAY="${DIFFICULTY^}"    # uppercase first letter
-
 # heredoc : set the variale with the text marked by the EOF
 DISCORD_PAYLOAD=$(cat <<EOF    
   {
     "embeds": [{
       "title": "Daily Flashcard - $FLASHCARD_ID | $TOPIC_NAME",
-      "description": "**Difficulty:** $DIFFICULTY_DISPLAY\n\nTime to keep your study streak going!",
-      "color": $COLOR,
+      "description": "**Difficulty:** $DIFFICULTY\n\nTime to keep your study streak going!",
       "fields": [
         {
           "name": "Question",
