@@ -27,7 +27,9 @@ source $CONFIG_FILE
 log "Starting Discord flashacard bot..."
 
 log "Logging in to API at $API_BASE_URL..."
-LOGIN_RESPONSE=$(curl -s -X POST "$API_BASE_URL/auth/login" -H "Content-Type: application/x-www-form-urlencoded" -d "username=$API_USERNAME&password=$API_PASSWORD")
+LOGIN_RESPONSE=$(curl -s -X POST "$API_BASE_URL/auth/login" \
+    -H "Content-Type: application/json" \
+    -d "{\"username\":\"$API_USERNAME\",\"password\":\"$API_PASSWORD\"}")
 
 if [[ $? -ne 0 ]]; then          # $? : exit status of last command
 	error_exit "Failed to connect to API at $API_BASE_URL"
