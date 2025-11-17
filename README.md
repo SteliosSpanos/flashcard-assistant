@@ -416,18 +416,18 @@ Set up automated daily flashcard reminders sent directly to your Discord server 
 ### Example Discord Message
 
 ```
-📚 Daily Flashcard - Python Basics
-Difficulty: Medium
+Daily Flashcard - 5 | Python Basics
+Difficulty: Moderate
 
-Time to keep your study streak going! 🔥
+Time to keep your study streak going!
 
-❓ Question
+Question
 What is a decorator in Python?
 
-💡 Answer
+Answer
 ||A function that modifies another||
 
-📊 Your Progress
+Your Progress
 Accuracy: 75%
 Streak: 5 days
 Cards Reviewed: 23
