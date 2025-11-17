@@ -517,7 +517,6 @@ flashcard-assistant/
 ├── .env.example                   # Environment variable template
 ├── .gitignore                     # Git ignore rules
 ├── LICENSE                        # MIT License
-├── CLAUDE.md                      # AI assistant project guidance
 └── README.md                      # This file
 ```
 
