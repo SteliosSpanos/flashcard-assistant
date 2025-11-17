@@ -38,9 +38,9 @@ A modern, AI-powered flashcard API built with FastAPI and PostgreSQL. Create stu
   - Study streak tracking with daily continuity detection
   - All-time performance metrics
 - **Discord Automation**:
-  - Automated daily flashcard reminders via n8n workflows
+  - Automated daily flashcard reminders via bash script and cron
   - Smart topic selection (prioritizes topics with lowest accuracy)
-  - Spoiler-tagged answers for self-testing
+  - Rich Discord embeds with color-coded difficulty levels
 - **RESTful API**: Clean, well-documented API with automatic Swagger UI documentation
 - **Docker Support**: Containerized deployment with docker-compose for easy setup
 
@@ -359,7 +359,7 @@ Response:
 }
 ```
 
-This endpoint automatically selects a flashcard from the topic where you need the most practice (lowest accuracy), making it ideal for automated daily reminders via n8n, Discord bots, or other automation tools.
+This endpoint automatically selects a flashcard from the topic where you need the most practice (lowest accuracy), making it ideal for automated daily reminders via bash scripts, Discord bots, or other automation tools.
 
 ## Discord Automation
 
@@ -377,26 +377,41 @@ Set up automated daily flashcard reminders sent directly to your Discord server 
 
 ### Quick Setup
 
-1. **Create a Discord webhook** in your server:
+1. **Install jq** (JSON parser):
+   ```bash
+   sudo apt update && sudo apt install jq
+   ```
+
+2. **Create a Discord webhook** in your server:
    - Server Settings → Integrations → Webhooks → New Webhook
    - Copy the webhook URL
 
-2. **Set up n8n** (cloud or self-hosted)
-
-3. **Configure environment variables** in n8n:
+3. **Configure the script**:
    ```bash
-   API_BASE_URL=http://your-api-url:8000
-   API_USERNAME=your_username
-   API_PASSWORD=your_password
-   DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+   cd scripts
+   cp config.example config
+   nano config
+   ```
+   Fill in your API URL, username, password, and Discord webhook URL.
+
+4. **Make the script executable**:
+   ```bash
+   chmod +x discord-flashcard-bot.sh
    ```
 
-4. **Import the workflow**:
-   - Import `n8n-workflows/discord-daily-flashcard.json` into n8n
-   - Customize the schedule (default: 9:00 AM daily)
-   - Activate the workflow
+5. **Test it**:
+   ```bash
+   ./discord-flashcard-bot.sh
+   ```
 
-5. **Start receiving daily flashcards** in Discord!
+6. **Set up daily automation with cron**:
+   ```bash
+   crontab -e
+   ```
+   Add this line for 9:00 AM daily:
+   ```
+   0 9 * * * /bin/bash /path/to/flashcard-assistant/scripts/discord-flashcard-bot.sh >> /path/to/flashcard-assistant/scripts/cron.log 2>&1
+   ```
 
 ### Example Discord Message
 
@@ -417,10 +432,10 @@ Accuracy: 75%
 Streak: 5 days
 Cards Reviewed: 23
 
-💡 Open the app to study and improve your progress!
+Open the app to study and improve your progress!
 ```
 
-**For detailed setup instructions**, see [`docs/n8n-discord-setup.md`](docs/n8n-discord-setup.md)
+**For detailed setup instructions**, see [`scripts/README.md`](scripts/README.md)
 
 ## API Documentation
 
@@ -469,7 +484,10 @@ The Swagger UI provides a comprehensive interface to:
 - `DELETE /progress/{topic_id}` - Delete the progress in a topic
 
 **Automation**:
-- `GET /automation/daily-flashcard` - Get a flashcard from the topic with the lowest accuracy for automated reminders
+- `GET /automation/daily-flashcard` - Get a flashcard for automated reminders
+  - Returns flashcard from topic with lowest accuracy
+  - Includes user progress stats (accuracy, streak, cards reviewed)
+  - Designed for bash scripts and Discord integration
 
 ## Project Structure
 
@@ -489,10 +507,10 @@ flashcard-assistant/
 │       ├── study.py               # Study session management
 │       ├── progress.py            # Progress tracking and statistics
 │       └── automation.py          # Automation endpoints for integrations
-├── n8n-workflows/
-│   └── discord-daily-flashcard.json  # n8n workflow for Discord automation
-├── docs/
-│   └── n8n-discord-setup.md       # Discord automation setup guide
+├── scripts/
+│   ├── discord-flashcard-bot.sh   # Bash script for Discord automation
+│   ├── config.example             # Configuration template
+│   └── README.md                  # Script setup guide
 ├── requirements.txt               # Python dependencies
 ├── Dockerfile                     # Docker image definition
 ├── docker-compose.yml             # Multi-container Docker setup
