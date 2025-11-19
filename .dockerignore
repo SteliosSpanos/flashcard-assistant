@@ -1,26 +1,30 @@
-__pycache__/
-*.py[cod]
-*.so
-
-venv/
-env/
-.venv
-
-.idea/
-
-.git/
+# Git
+.git
 .gitignore
 
-.claude/
-
+# Environment files (contains secrets!)
 .env
 .env.*
-!.env.example
 
-Dockerfile
-docker-compose.yml
-.dockerignore
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
 
-README.md
-CLAUDE.md
-LICENSE
+# Virtual environment
+.venv
+venv
+env
+
+# Logs
+*.log
+
+# Documentation (not needed in container)
+*.md
+.claude
+
+# Scripts config (contains credentials)
+scripts/config
+scripts/*.log
+
