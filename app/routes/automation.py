@@ -100,4 +100,3 @@ async def get_daily_flashcard(
             difficulty=selected_flashcard.difficulty,
             user_progress=progress_data
     )
-
