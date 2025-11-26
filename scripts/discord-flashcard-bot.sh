@@ -19,10 +19,10 @@ fi
 
 source $CONFIG_FILE
 
-[ -z "$API_BASE_URL" ] && error_exit "API_BASE_URL not set in config"
-[ -z "$API_USERNAME" ] && error_exit "API_USERNAME not set in config"
-[ -z "$API_PASSWORD" ] && error_exit "API_PASSWORD not set in config"
-[ -z "$DISCORD_WEBHOOK_URL" ] && error_exit "DISCORD_WEBHOOK_URL not set in config"
+[[ -z "$API_BASE_URL" ]] && error_exit "API_BASE_URL not set in config"
+[[ -z "$API_USERNAME" ]] && error_exit "API_USERNAME not set in config"
+[[ -z "$API_PASSWORD" ]] && error_exit "API_PASSWORD not set in config"
+[[ -z "$DISCORD_WEBHOOK_URL" ]] && error_exit "DISCORD_WEBHOOK_URL not set in config"
 
 log "Starting Discord flashacard bot..."
 
@@ -37,7 +37,7 @@ fi
 
 ACCESS_TOKEN=$(echo "$LOGIN_RESPONSE" | jq -r ".access_token")         # extract raw the contents of 'access_token' field
 
-if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" == "null" ]; then
+if [[ -z "$ACCESS_TOKEN" ]] || [[ "$ACCESS_TOKEN" == "null" ]]; then
 	error_exit "Failed to get access token. Check your credentials"
 fi
 
@@ -46,7 +46,7 @@ log "Successfully authenticated!"
 log "Fetching daily flashcard..."
 FLASHCARD_RESPONSE=$(curl -X GET "$API_BASE_URL/automation/daily-flashcard" -H "Authorization: Bearer $ACCESS_TOKEN")
 
-if [ $? -ne 0 ]; then
+if [[ $? -ne 0 ]]; then
 	error_exit "Failed to fetch flashcard from API"
 fi
 
@@ -59,7 +59,7 @@ ACCURACY=$(echo "$FLASHCARD_RESPONSE" | jq -r ".user_progress.accuracy")
 STREAK=$(echo "$FLASHCARD_RESPONSE" | jq -r ".user_progress.streak_days")
 CARDS_REVIEWED=$(echo "$FLASHCARD_RESPONSE" | jq -r ".user_progress.flashcards_reviewed")
 
-if [ -z "$FLASHCARD_ID" ] || [ "$FLASHCARD_ID" == "null" ]; then
+if [[ -z "$FLASHCARD_ID" ]] || [[ "$FLASHCARD_ID" == "null" ]]; then
 	error_exit "Failed to parse flashcard data. Response: $FLASHCARD_RESPONSE"
 fi
 
@@ -82,7 +82,6 @@ esac
 
 DIFFICULTY_DISPLAY="${DIFFICULTY^}"
 
-# heredoc : set the variale with the text marked by the EOF
 DISCORD_PAYLOAD=$(cat <<EOF    
   {
     "embeds": [{
@@ -118,7 +117,7 @@ EOF
 log "Sending to Discord..."
 DISCORD_RESPONSE=$(curl -s -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d "$DISCORD_PAYLOAD")
 
-if [ $? -ne 0 ]; then
+if [[ $? -ne 0 ]]; then
 	error_exit "Failed to send message to Discord"
 fi
 
